@@ -5,10 +5,10 @@
 typedef unsigned int BB;
 typedef unsigned int Move;
 
-
+inline const int NULL_MOVE = 9;
 inline int INFINITY = 11;
 inline char SYMBOLS[2] = {'O', 'X'};
-inline BB MOVE_TO_BB[9] = {1, 2, 4, 8, 16, 32, 64, 128, 256};
+inline BB MOVE_TO_BB[9] = {1, 2, 4, 8, 16, 32, 64, 128, 256}; // MOVE_TO_BB[x] = pow(2, x) or 1 << x
 
 constexpr BB zeroes_start(const BB &board) {
     return __builtin_ctzll(board);
@@ -128,17 +128,17 @@ void generate_moves(const tic_tac_toe_board &board, std::vector<Move> &moves) {
     }
 }
 
-inline Move best_move = 9;
-inline int best_eval = -11;
+inline Move best_move = NULL_MOVE;
+inline int best_eval = -INFINITY;
 
 int search(tic_tac_toe_board &board, const int &depth_from_start=0) {
     if (board.state == DRAW) {
         return 0;
     }
     if (board.state == WIN) {
-        return -10 + depth_from_start;
+        return -INFINITY + depth_from_start;
     }
-    int eval = -11;
+    int eval = -INFINITY;
     std::vector<Move> moves;
     generate_moves(board, moves);
     for (Move move : moves) {
@@ -174,8 +174,8 @@ int main() {
             break;
         }
         if (board.turn) {
-            best_move = 9;
-            best_eval = -11;
+            best_move = NULL_MOVE;
+            best_eval = -INFINITY;
             search(board);
             play_move(best_move, board);
             print_tic_tac_toe(board);
